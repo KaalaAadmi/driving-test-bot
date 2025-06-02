@@ -16,9 +16,23 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
 
+USER_DIR=os.getenv("USER_DIR")
+USER_PROFILE=os.getenv("USER_PROFILE")
+
 def load_webpage(driver):
-    driver.get("https://rsaie.queue-it.net/?c=rsaie&e=bsprodfeb&ver=v3-javascript-3.6.3&cver=37&man=Portal&t=https%3A%2F%2Fmyroadsafety.rsa.ie%2Fportal%2Fmy-goal%2F8efa0cc8-724e-ef11-af89-005056b9b50c&kupver=cloudflare-1.2.0")
+    print("Loading webpage...")
+    driver.get("https://rsaie.queue-it.net/?c=rsaie&e=bsprodfeb&ver=v3-javascript-3.6.3&cver=37&man=Portal")
+    sleep(10)  # Wait for the page to load
+    try:
+        # /html/body//div[1]/div/div[1]/div/label/input
+        # /html/body//div[1]/div/div[1]/div/label/input
+        ishuman_button=driver.find_element(By.XPATH,"/html/body//div[1]/div/div[1]/div/label/span[2]")
+        ishuman_button.click()
+    except NoSuchElementException:
+        print("No 'I am human' button found. Continuing without clicking.")
     sleep(5)  # Wait for the page to load
+    print("Checking wait time for webpage to be accessible...")
+    # Wait for the wait time element to be present
     try:
         time_to_sleep=driver.find_element(By.XPATH,"/html/body/div[3]/div[2]/div[3]/div[1]/div[5]/div/p[3]/span[11]").text
     except NoSuchElementException:
@@ -36,16 +50,33 @@ def main():
     # options.add_argument(r"--user-data-dir=C:/Users/User01/AppData/Local/Google/Chrome/User Data")
     # options.add_argument(r'--profile-directory=Default')
     # driver = webdriver.Chrome(options=options)
+    # options.add_argument(r"user-data-dir=/Users/arnavbhattacharya/Library/Application Support/Google/Chrome/Default")
     options=Options()
-    options.add_argument(r"user-data-dir=/Users/arnavbhattacharya/Library/Application Support/Google/Chrome/Default")
-    driver=webdriver.Chrome(options=options)
+    # options.add_argument("--user-data-dir=C:\\Users\\arnav\\AppData\\Local\\Google\\Chrome\\User Data")
+    #Here you specify the actual profile folder    
+    # options.add_argument("--profile-directory=Profile 2")
+    # options.add_argument("--remote-debugging-port=9222")
+    options.add_argument(f"--user-data-dir={USER_DIR}")
+    #Here you specify the actual profile folder    
+    options.add_argument(f"--profile-directory={USER_PROFILE}")
+    options.add_argument('ignore-certificate-errors')
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    driver=webdriver.Edge(options=options)
     load_webpage(driver)
-    driver.refresh()
     print("Webpage loaded successfully. Refreshing...")
+    driver.refresh()
+    sleep(5)
+    try:
+        ishuman_button=driver.find_element(By.XPATH,"//*[@id=\"wBIvQ7\"]/div/label/input")
+        ishuman_button.click()
+    except NoSuchElementException:
+        print("No 'I am human' button found. Continuing without clicking.")
     sleep(5)
     print("Accepting cookies and closing warnings...")
     try:
-        accept_cookies_button=driver.find_element(By.XPATH,"/html/body/div[1]/div[3]/div/div/div[3]/button").click()
+        # accept_cookies_button=driver.find_element(By.XPATH,"/html/body/div[1]/div[3]/div/div/div[3]/button").click()
+        accept_cookies_button=driver.find_element(By.ID,"onetrust-accept-btn-handler")
+        accept_cookies_button.click()
     except NoSuchElementException:
         print("Accept cookies button not found.")
     sleep(1)

@@ -5,18 +5,27 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
-username=os.getenv("USERNAME")
-password=os.getenv("PASSWORD")
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from time import sleep
 
-print(f"Username: {username}")
-print(f"Password: {password}")
-
-# Add a goal button: /html/body/app-root/app-portal-parent/div[2]/mat-drawer-container/mat-drawer-content/div/div/div/app-my-goals/div[4]/button
-# sleep(5)
-# View my goal: /html/body/app-root/app-portal-parent/div[2]/mat-drawer-container/mat-drawer-content/div/div/div/app-goals/div/mat-accordion/mat-expansion-panel[1]/div/div/div/div[1]/app-goal/mat-card/mat-card-content/button[2]
-# sleep(2)
-# book a test: /html/body/app-root/app-portal-parent/div[2]/mat-drawer-container/mat-drawer-content/div/div/div/app-my-goal/div[2]/div/div[6]/app-my-goal-step-full/mat-card/mat-card-content/div/div/div/div/button
-# sleep(2)
-# locations: /html/body/app-root/app-portal-parent/div[2]/mat-drawer-container/mat-drawer-content/div/div/div/app-booking/app-booking-new/div/div/mat-horizontal-stepper/div/div[2]/div[1]/form/div/app-booking-new-form/div/div[2]/div[3]/div[1]/app-booking-form-location/button/span[1]/div/div[2]
-# sleep(2)
-# More loacations: /html/body/div[2]/div[2]/div/div/div/button[5]
+USER_DIR=os.getenv("USER_DIR")
+USER_PROFILE=os.getenv("USER_PROFILE")
+options=Options()
+options.add_argument(f"--user-data-dir={USER_DIR}")
+#Here you specify the actual profile folder    
+options.add_argument(f"--profile-directory={USER_PROFILE}")
+# options.add_argument("--remote-debugging-port=9222")
+options.add_argument('ignore-certificate-errors')
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+driver=webdriver.Edge(options=options)
+driver.get("https://yahoo.com")
+sleep(5)  # Wait for the page to load
+sleep(60)
